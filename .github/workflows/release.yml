@@ -1,0 +1,53 @@
+name: Build Release ZIP
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build clean ZIP
+        shell: bash
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          PACKAGE_DIR="MSU-BOT-${VERSION}"
+          ZIP_NAME="MSU-BOT-${VERSION}.zip"
+
+          mkdir -p "$PACKAGE_DIR"
+
+          rsync -av ./ "$PACKAGE_DIR/" \
+            --exclude=".git/" \
+            --exclude=".github/" \
+            --exclude=".env" \
+            --exclude=".env.*" \
+            --include=".env.example" \
+            --exclude="node_modules/" \
+            --exclude="data/debug/" \
+            --exclude="data/*.db" \
+            --exclude="data/*.db-shm" \
+            --exclude="data/*.db-wal" \
+            --exclude="bindings.json" \
+            --exclude="data/bindings.json" \
+            --exclude="data/knownCharacters.json" \
+            --exclude="data/msusign.json" \
+            --exclude="*.zip" \
+            --exclude="*.rar" \
+            --exclude="*.7z"
+
+          zip -r "$ZIP_NAME" "$PACKAGE_DIR"
+
+      - name: Upload ZIP to Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          gh release upload "$VERSION" "MSU-BOT-${VERSION}.zip" --clobber
