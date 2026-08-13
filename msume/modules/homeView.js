@@ -91,6 +91,12 @@ function buildHomeComponents(ownerId) {
         emoji: '📈'
       },
       {
+        label: '強化價格查詢',
+        description: '依裝備分類與等級查詢星力／潛能即時價格',
+        value: 'enhancement',
+        emoji: '🔨'
+      },
+      {
         label: '玩家設置',
         description: '查看角色、啟用狀態、本尊與別名',
         value: 'settings',

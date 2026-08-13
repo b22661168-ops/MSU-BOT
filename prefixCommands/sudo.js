@@ -219,6 +219,29 @@ module.exports = {
     const action = args[2]?.toLowerCase();
     const user = message.mentions.users.first();
 
+    if (group === 'say') {
+      const match = message.content.match(/^>sudo\s+say(?:\s+([\s\S]*))?$/i);
+      const content = match?.[1]?.trim();
+
+      if (!content) {
+        return message.reply('格式：`>sudo say <內容>`');
+      }
+
+      try {
+        await message.delete();
+      } catch (error) {
+        console.error('[SUDO SAY] 刪除指令訊息失敗：', error.message || error);
+        return message.reply('❌ 無法刪除原本的指令訊息，請確認 Bot 擁有「管理訊息」權限。');
+      }
+
+      try {
+        return await message.channel.send({ content });
+      } catch (error) {
+        console.error('[SUDO SAY] 發送訊息失敗：', error.message || error);
+        return message.channel.send('❌ Bot 發送訊息失敗，請檢查頻道權限或訊息內容。');
+      }
+    }
+
     if (group === 'exp') {
       if (action === 'setup') {
         if (!message.guild) return message.reply('❌ 這個指令只能在伺服器頻道使用。');
@@ -457,7 +480,7 @@ module.exports = {
       return message.reply('格式：`>sudo pt list/view/find/remove/leader/delete/edit ...`\n新增 Discord／knownchar 建議從 `>msuME → 我的隊伍` 操作。');
     }
 
-    if (group !== 'bind') return message.reply('格式：`>sudo bind ...`、`>sudo pt ...` 或 `>sudo exp ...`');
+    if (group !== 'bind') return message.reply('格式：`>sudo say <內容>`、`>sudo bind ...`、`>sudo pt ...` 或 `>sudo exp ...`');
     if (!user) return message.reply('❌ 請標記 Discord 使用者。');
     if (action === 'list') {
       const binding = getBinding(user.id);

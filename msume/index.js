@@ -15,6 +15,7 @@ const settingsView = require('./modules/settingsView');
 const arcView = require('./modules/arcView');
 const raffleView = require('./modules/raffleView');
 const expView = require('./modules/expView');
+const enhancementPriceView = require('./modules/enhancementPriceView');
 const settlementModule = require('./modules/settlement');
 
 const runtime = {
@@ -32,6 +33,7 @@ const runtime = {
   ...arcView,
   ...raffleView,
   ...expView,
+  ...enhancementPriceView,
   ...settlementModule
 };
 

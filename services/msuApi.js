@@ -110,11 +110,26 @@ async function getItemMetadata(itemId) {
   return response.data?.data?.item;
 }
 
+async function getEnhancementDynamicPrice(itemId) {
+  const url = `${API_BASE_URL}/enhancement/items/${itemId}/dynamicprice`;
+
+  const response = await axios.get(url, {
+    headers: {
+      ...getHeaders(),
+      'Content-Type': 'application/json'
+    },
+    timeout: 10000
+  });
+
+  return response.data;
+}
+
 module.exports = {
   getNesoBalance,
   getCharactersByWallet,
   getCharacterDetail,
   getCharacterRaffleHistory,
   getCharacterRaffleInfo,
-  getItemMetadata
+  getItemMetadata,
+  getEnhancementDynamicPrice
 };

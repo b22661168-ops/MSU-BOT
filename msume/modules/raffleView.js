@@ -517,7 +517,7 @@ async function queryAllRaffleSummary(ownerId, raffledAt, page = 0) {
 
     // 多角色摘要會逐隻查詢；保留短暫間隔，降低 API 瞬間請求壓力。
     if (character !== characters[characters.length - 1]) {
-      await sleep(500);
+      await sleep(700);
     }
   }
 

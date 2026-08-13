@@ -81,6 +81,12 @@ async function handleInteraction(interaction, runtime) {
     buildArcButtons,
     formatArcOptimizerText,
     buildExpPayload,
+    buildEnhancementCategoryPayload,
+    buildEnhancementLevelPayload,
+    buildEnhancementSummaryPayload,
+    buildStarforcePricePayload,
+    buildPotentialPricePayload,
+    enhancementPriceErrorPayload,
     handleSettlementInteraction
   } = runtime;
   const parts = interaction.customId.split('|');
@@ -187,6 +193,44 @@ Boss 由建立時選擇；Layer 請透過「管理 Layer」調整。`,components
           return interaction.update({ content: '❌ 你還沒有綁定角色。', components: [] });
         }
         return interaction.update(buildRaffleCenterPayload(ownerId));
+      }
+
+      if (action === 'msume_enhancement_categories') {
+        return interaction.update(buildEnhancementCategoryPayload(ownerId));
+      }
+
+      if (action === 'msume_enhancement_levels') {
+        return interaction.update(buildEnhancementLevelPayload(ownerId, parts[2]));
+      }
+
+      if (action === 'msume_enhancement_starforce') {
+        await interaction.deferUpdate();
+        try {
+          return interaction.editReply(await buildStarforcePricePayload(ownerId, parts[2], Number(parts[3])));
+        } catch (error) {
+          console.error('[MSUME][Enhancement][Starforce]', error.response?.data || error.stack || error);
+          return interaction.editReply(enhancementPriceErrorPayload(ownerId, error));
+        }
+      }
+
+      if (action === 'msume_enhancement_potential') {
+        await interaction.deferUpdate();
+        try {
+          return interaction.editReply(await buildPotentialPricePayload(ownerId, parts[2], Number(parts[3])));
+        } catch (error) {
+          console.error('[MSUME][Enhancement][Potential]', error.response?.data || error.stack || error);
+          return interaction.editReply(enhancementPriceErrorPayload(ownerId, error));
+        }
+      }
+
+      if (action === 'msume_enhancement_refresh') {
+        await interaction.deferUpdate();
+        try {
+          return interaction.editReply(await buildEnhancementSummaryPayload(ownerId, parts[2], Number(parts[3]), { force: true }));
+        } catch (error) {
+          console.error('[MSUME][Enhancement][Refresh]', error.response?.data || error.stack || error);
+          return interaction.editReply(enhancementPriceErrorPayload(ownerId, error));
+        }
       }
 
       if (action === 'msume_arc_optimizer') {
@@ -425,12 +469,33 @@ Boss 由建立時選擇；Layer 請透過「管理 Layer」調整。`,components
         return interaction.update(buildExpPayload(ownerId));
       }
 
+      if (feature === 'enhancement') {
+        return interaction.update(buildEnhancementCategoryPayload(ownerId));
+      }
+
       if (feature === 'settings') {
         return interaction.update(buildSettingsPayload(ownerId));
       }
     }
 
 
+
+
+    if (interaction.isStringSelectMenu() && action === 'msume_enhancement_category') {
+      return interaction.update(buildEnhancementLevelPayload(ownerId, interaction.values[0]));
+    }
+
+    if (interaction.isStringSelectMenu() && action === 'msume_enhancement_level') {
+      const categoryKey = parts[2];
+      const level = Number(interaction.values[0]);
+      await interaction.deferUpdate();
+      try {
+        return interaction.editReply(await buildEnhancementSummaryPayload(ownerId, categoryKey, level));
+      } catch (error) {
+        console.error('[MSUME][Enhancement][Summary]', error.response?.data || error.stack || error);
+        return interaction.editReply(enhancementPriceErrorPayload(ownerId, error));
+      }
+    }
 
     if (interaction.isStringSelectMenu() && action === 'msume_exp_char') {
       return interaction.update(buildExpPayload(ownerId, interaction.values[0]));

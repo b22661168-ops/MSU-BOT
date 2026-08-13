@@ -5,6 +5,8 @@ const topCommand = require('./slashCommands/top');
 const ptCommand = require('./prefixCommands/pt');
 const walletsCommand = require('./prefixCommands/wallets');
 const raffleCommand = require('./prefixCommands/raffle');
+const debugCommand = require('./prefixCommands/debug');
+const epCommand = require('./prefixCommands/ep');
 const pondaCommand = require('./prefixCommands/ponda');
 const bindCommand = require('./prefixCommands/bind');
 const charsCommand = require('./prefixCommands/chars');
@@ -25,6 +27,10 @@ const farmCommand = require('./prefixCommands/farm');
 const burnCommand = require('./prefixCommands/burn');
 const sudoCommand = require('./prefixCommands/sudo');
 const sudohelpCommand = require('./prefixCommands/sudohelp');
+const arc2Command = require('./prefixCommands/arc2');
+const arc3Command = require('./prefixCommands/arc3');
+const arc4Command = require('./prefixCommands/arc4');
+const arc6Command = require('./prefixCommands/arc6');
 const msusignCommand = require('./mod/msusign');
 
 const { loadBindings } = require('./services/bindingService');
@@ -265,7 +271,8 @@ client.on('messageCreate', async (message) => {
     'layer',
     'knownchar',
     'sudo',
-    'sudohelp'
+    'sudohelp',
+    'ep'
   ];
 
   if (
@@ -278,6 +285,8 @@ client.on('messageCreate', async (message) => {
 
   const prefixCommands = {
     ponda: pondaCommand,
+    debug: debugCommand,
+    ep: epCommand,
     bind: bindCommand,
     wallets: walletsCommand,
     'raffle-debug': raffleDebugCommand,
@@ -297,7 +306,11 @@ client.on('messageCreate', async (message) => {
     sudo: sudoCommand,
     sudohelp: sudohelpCommand,
     msusign: msusignCommand,
-    burn: burnCommand
+    burn: burnCommand,
+    arc2: arc2Command,
+    arc3: arc3Command,
+    arc4: arc4Command,
+    arc6: arc6Command
   };
 
   if (
